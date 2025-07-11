@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find The Pets Game - Find 150 Hidden Pets in 3D Maps for Free!</title>
+  <meta name="keywords" content="Find The Pets , pet finding game, online browser games, cute pet game, 3D platformer, HTML5 games, hidden pets, Floppa meme cat, casual games, Unity web game, play for free, pet collection game">
+  <meta name="description" content="Play Find The Pets , a fun and relaxing 3D pet collection game! Explore 6 unique maps and discover 150 hidden pets including meme favorites like Floppa. No download required – play instantly in your browser for free!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4e8cff;
+      --accent: #ffb84e;
+      --bg: #f7f9fb;
+      --card: #fff;
+      --text: #222;
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Roboto', 'ZCOOL KuaiLe', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 2rem 1rem 1rem 1rem;
+      text-align: center;
+      border-bottom-left-radius: var(--radius);
+      border-bottom-right-radius: var(--radius);
+    }
+    header h1 {
+      font-family: 'ZCOOL KuaiLe', cursive;
+      font-size: 2.2rem;
+      margin: 0 0 0.5rem 0;
+    }
+    .desc {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    main {
+      flex: 1;
+      padding: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 */
+      margin-bottom: 1.5rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 12px #0002;
+      background: #222;
+    }
+    .iframe-container iframe {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%; border: 0;
+    }
+    .video-section {
+      margin-bottom: 1.5rem;
+    }
+    .video-section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .video-section iframe {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: var(--radius);
+      border: none;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .instructions {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .instructions h2 {
+      font-size: 1.2rem;
+      margin-top: 0;
+    }
+    .instructions p {
+      margin-bottom: 1.1em;
+    }
+    .reviews {
+      margin-bottom: 1.5rem;
+    }
+    .reviews h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .review-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .review-list li {
+      background: var(--card);
+      border-radius: var(--radius);
+      margin-bottom: 0.7rem;
+      padding: 0.8rem 1rem;
+      box-shadow: 0 2px 8px #0001;
+      font-size: 1rem;
+    }
+    footer {
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      padding: 1.2rem 1rem 1rem 1rem;
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+      font-size: 1rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      main { padding: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="font-size:2rem;">Find The Pets</h1>
+    <h2 class="desc">Explore and Collect 150 Hidden Pets in this 3D Browser Game</h2>
+  </header>
+  <main>
+    <section class="iframe-container" id="game-section">
+      <iframe id="game-iframe" src="https://games.crazygames.com/en_US/find-the-pets-cph/index.html?v=1.335" title="Find The Pets" allow="autoplay; payment; fullscreen; microphone; focus-without-user-activation *; screen-wake-lock; gamepad; clipboard-read; clipboard-write; accelerometer; gyroscope; " allowfullscreen sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin allow-downloads  allow-popups allow-popups-to-escape-sandbox" loading="lazy" importance="high" data-hj-allow-iframe="true"></iframe>
+    </section>
+    <section class="video-section">
+      <h2>Game Video</h2>
+      <iframe src="https://www.youtube.com/embed/WU2I3pLVkag" title="Find The Pets Game Video" allowfullscreen loading="lazy"></iframe>
+    </section>
+    <section class="instructions">
+      <h2>How to Play</h2>
+      <p>🎯 <strong>Objective:</strong><br>
+      Explore different 3D maps to find and collect all 150 adorable hidden pets, including meme cat Floppa and other fun characters.</p>
+      <p>🎮 <strong>Controls (PC):</strong><br>
+      W / A / S / D or Arrow Keys: Move character<br>
+      Spacebar: Jump<br>
+      Mouse Drag: Rotate camera, look around<br>
+      M: Open map to view current area<br>
+      P: View collected pets<br>
+      L: Show pet distribution info (some require ad unlock)<br>
+      Q / E / F: Use three power-up items (Speed Boost, Super Jump, Radar)
+      </p>
+      <p>📱 <strong>Mobile Controls (Touch Devices):</strong><br>
+      Left joystick: Move character<br>
+      Right swipe area: Rotate camera<br>
+      On-screen buttons: Jump / Use items / Open map, etc.
+      </p>
+      <p>⚡ <strong>Tips:</strong><br>
+      Some pets are well hidden—try jumping onto rooftops or searching corners!<br>
+      Use power-ups (like Radar) to quickly locate nearby pets.<br>
+      Explore at your own pace—there’s no time limit, perfect for relaxing play.
+      </p>
+    </section>
+    <section class="reviews">
+      <h2>Player Reviews</h2>
+      <ul class="review-list">
+        <li>🌟 “So many pet types—Floppa is adorable!”</li>
+        <li>🌟 “The maps are fun, and finding pets is full of surprises.”</li>
+        <li>🌟 “Simple controls, beautiful graphics, great for relaxing.”</li>
+        <li>🌟 “Power-ups are super helpful—Radar helped me find the last cat!”</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    Find The Pets is a 3D adventure puzzle game playable in your browser and suitable for all ages.<br>
+    &copy; 2025 Find The Pets. All rights reserved.
+  </footer>
+  <script>
+    function scrollToGame() {
+      document.getElementById('game-section').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html> 
