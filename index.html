@@ -2,12 +2,19 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Find The Pets Game - Find 150 Hidden Pets in 3D Maps for Free!</title>
   <meta name="keywords" content="Find The Pets , pet finding game, online browser games, cute pet game, 3D platformer, HTML5 games, hidden pets, Floppa meme cat, casual games, Unity web game, play for free, pet collection game">
   <meta name="description" content="Play Find The Pets , a fun and relaxing 3D pet collection game! Explore 6 unique maps and discover 150 hidden pets including meme favorites like Floppa. No download required – play instantly in your browser for free!">
+  
+  <!-- 预加载关键资源 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://games.crazygames.com">
+  <link rel="preconnect" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://games.crazygames.com">
+  <link rel="dns-prefetch" href="https://www.youtube.com">
+  
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -27,6 +34,8 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     header {
       background: var(--primary);
@@ -66,6 +75,75 @@
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%; border: 0;
     }
+    
+    /* 加载状态样式 */
+    .loading-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      z-index: 10;
+      transition: opacity 0.3s ease;
+    }
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* 错误状态样式 */
+    .error-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      z-index: 15;
+    }
+    .error-overlay h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.2rem;
+    }
+    .error-overlay p {
+      margin: 0 0 1.5rem 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    .retry-btn {
+      background: var(--accent);
+      color: #222;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .retry-btn:hover {
+      transform: scale(1.05);
+    }
+    
     .video-section {
       margin-bottom: 1.5rem;
     }
@@ -73,13 +151,59 @@
       font-size: 1.2rem;
       margin-bottom: 0.5rem;
     }
-    .video-section iframe {
+    .video-container {
+      position: relative;
       width: 100%;
-      aspect-ratio: 16/9;
+      padding-top: 56.25%; /* 16:9 */
       border-radius: var(--radius);
-      border: none;
+      overflow: hidden;
       box-shadow: 0 2px 8px #0001;
+      background: #f0f0f0;
     }
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      border: none;
+    }
+    .video-placeholder {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+    .video-placeholder.hidden {
+      display: none;
+    }
+    .video-placeholder h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.1rem;
+    }
+    .video-placeholder p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    .load-video-btn {
+      background: var(--accent);
+      color: #222;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: transform 0.2s ease;
+    }
+    .load-video-btn:hover {
+      transform: scale(1.05);
+    }
+    
     .instructions {
       background: var(--card);
       border-radius: var(--radius);
@@ -124,9 +248,31 @@
       font-size: 1rem;
       margin-top: 2rem;
     }
+    
+    /* 移动端优化 */
     @media (max-width: 600px) {
       header h1 { font-size: 1.5rem; }
       main { padding: 0.5rem; }
+      .iframe-container {
+        margin-bottom: 1rem;
+      }
+      .video-container {
+        margin-bottom: 1rem;
+      }
+      .instructions {
+        padding: 0.8rem;
+      }
+      .instructions p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+    }
+    
+    /* 触摸设备优化 */
+    @media (hover: none) and (pointer: coarse) {
+      .load-video-btn, .retry-btn {
+        min-height: 44px; /* 确保触摸目标足够大 */
+      }
     }
   </style>
 </head>
@@ -137,12 +283,30 @@
   </header>
   <main>
     <section class="iframe-container" id="game-section">
-      <iframe id="game-iframe" src="https://games.crazygames.com/en_US/find-the-pets-cph/index.html?v=1.335" title="Find The Pets" allow="autoplay; payment; fullscreen; microphone; focus-without-user-activation *; screen-wake-lock; gamepad; clipboard-read; clipboard-write; accelerometer; gyroscope; " allowfullscreen sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin allow-downloads  allow-popups allow-popups-to-escape-sandbox" loading="lazy" importance="high" data-hj-allow-iframe="true"></iframe>
+      <div class="loading-overlay" id="game-loading">
+        <div class="loading-spinner"></div>
+        <div>Loading Game...</div>
+      </div>
+      <div class="error-overlay" id="game-error" style="display: none;">
+        <h3>🎮 Game Loading Issue</h3>
+        <p>Sorry, the game couldn't load properly. This might be due to network restrictions or browser settings. Try refreshing the page or using a different browser.</p>
+        <button class="retry-btn" onclick="retryGame()">🔄 Retry Loading</button>
+      </div>
+      <iframe id="game-iframe" src="https://games.crazygames.com/en_US/find-the-pets-cph/index.html?v=1.335" title="Find The Pets" allow="autoplay; payment; fullscreen; microphone; focus-without-user-activation *; screen-wake-lock; gamepad; clipboard-read; clipboard-write; accelerometer; gyroscope; " allowfullscreen sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin allow-downloads allow-popups allow-popups-to-escape-sandbox" importance="high" data-hj-allow-iframe="true"></iframe>
     </section>
+    
     <section class="video-section">
       <h2>Game Video</h2>
-      <iframe src="https://www.youtube.com/embed/WU2I3pLVkag" title="Find The Pets Game Video" allowfullscreen loading="lazy"></iframe>
+      <div class="video-container">
+        <div class="video-placeholder" id="video-placeholder">
+          <h3>🎮 Game Preview</h3>
+          <p>Watch the gameplay video to see how to find all the hidden pets!</p>
+          <button class="load-video-btn" onclick="loadVideo()">▶️ Load Video</button>
+        </div>
+        <iframe id="video-iframe" src="" title="Find The Pets Game Video" allowfullscreen style="display: none;"></iframe>
+      </div>
     </section>
+    
     <section class="instructions">
       <h2>How to Play</h2>
       <p>🎯 <strong>Objective:</strong><br>
@@ -164,16 +328,16 @@
       <p>⚡ <strong>Tips:</strong><br>
       Some pets are well hidden—try jumping onto rooftops or searching corners!<br>
       Use power-ups (like Radar) to quickly locate nearby pets.<br>
-      Explore at your own pace—there’s no time limit, perfect for relaxing play.
+      Explore at your own pace—there's no time limit, perfect for relaxing play.
       </p>
     </section>
     <section class="reviews">
       <h2>Player Reviews</h2>
       <ul class="review-list">
-        <li>🌟 “So many pet types—Floppa is adorable!”</li>
-        <li>🌟 “The maps are fun, and finding pets is full of surprises.”</li>
-        <li>🌟 “Simple controls, beautiful graphics, great for relaxing.”</li>
-        <li>🌟 “Power-ups are super helpful—Radar helped me find the last cat!”</li>
+        <li>🌟 "So many pet types—Floppa is adorable!"</li>
+        <li>🌟 "The maps are fun, and finding pets is full of surprises."</li>
+        <li>🌟 "Simple controls, beautiful graphics, great for relaxing."</li>
+        <li>🌟 "Power-ups are super helpful—Radar helped me find the last cat!"</li>
       </ul>
     </section>
   </main>
@@ -181,7 +345,108 @@
     Find The Pets is a 3D adventure puzzle game playable in your browser and suitable for all ages.<br>
     &copy; 2025 Find The Pets. All rights reserved.
   </footer>
+  
   <script>
+    // 游戏加载处理
+    const gameIframe = document.getElementById('game-iframe');
+    const gameLoading = document.getElementById('game-loading');
+    const gameError = document.getElementById('game-error');
+    let gameLoadTimeout;
+    let gameLoadAttempts = 0;
+    const maxAttempts = 3;
+    
+    function initGame() {
+      gameLoadAttempts++;
+      gameLoading.style.display = 'flex';
+      gameError.style.display = 'none';
+      
+      // 设置超时检测
+      gameLoadTimeout = setTimeout(() => {
+        if (gameLoadAttempts < maxAttempts) {
+          console.log(`Game load attempt ${gameLoadAttempts} failed, retrying...`);
+          retryGame();
+        } else {
+          console.log('Game failed to load after multiple attempts');
+          showGameError();
+        }
+      }, 15000); // 15秒超时
+    }
+    
+    function showGameError() {
+      gameLoading.style.display = 'none';
+      gameError.style.display = 'flex';
+    }
+    
+    function retryGame() {
+      clearTimeout(gameLoadTimeout);
+      gameIframe.src = gameIframe.src; // 重新加载iframe
+      initGame();
+    }
+    
+    // 检测游戏是否加载完成
+    gameIframe.addEventListener('load', function() {
+      clearTimeout(gameLoadTimeout);
+      setTimeout(() => {
+        gameLoading.classList.add('hidden');
+        gameLoadAttempts = 0; // 重置尝试次数
+      }, 2000); // 给游戏一点时间初始化
+    });
+    
+    // 检测游戏加载错误
+    gameIframe.addEventListener('error', function() {
+      clearTimeout(gameLoadTimeout);
+      if (gameLoadAttempts < maxAttempts) {
+        retryGame();
+      } else {
+        showGameError();
+      }
+    });
+    
+    // 初始化游戏加载
+    initGame();
+    
+    // 视频加载处理
+    function loadVideo() {
+      const videoIframe = document.getElementById('video-iframe');
+      const videoPlaceholder = document.getElementById('video-placeholder');
+      
+      // 设置YouTube视频URL，添加移动端优化参数
+      videoIframe.src = 'https://www.youtube.com/embed/WU2I3pLVkag?autoplay=0&rel=0&modestbranding=1&playsinline=1';
+      
+      // 显示视频，隐藏占位符
+      videoIframe.style.display = 'block';
+      videoPlaceholder.classList.add('hidden');
+      
+      // 检测视频加载错误
+      videoIframe.addEventListener('error', function() {
+        console.log('Video failed to load');
+        videoPlaceholder.innerHTML = `
+          <h3>🎮 Video Unavailable</h3>
+          <p>Sorry, the video couldn't load. This might be due to network restrictions.</p>
+          <p style="font-size: 0.8rem; margin-top: 1rem;">You can still enjoy the game above!</p>
+        `;
+        videoPlaceholder.classList.remove('hidden');
+        videoIframe.style.display = 'none';
+      });
+    }
+    
+    // 检测移动设备
+    function isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    
+    // 移动端优化
+    if (isMobile()) {
+      // 在移动端预加载游戏
+      gameIframe.setAttribute('loading', 'eager');
+      
+      // 添加触摸优化
+      document.addEventListener('touchstart', function() {}, {passive: true});
+      
+      // 移动端特殊处理
+      console.log('Mobile device detected, applying optimizations...');
+    }
+    
     function scrollToGame() {
       document.getElementById('game-section').scrollIntoView({ behavior: 'smooth' });
     }
