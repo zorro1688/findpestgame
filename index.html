@@ -6,6 +6,8 @@
   <title>Find The Pets Game - Find 150 Hidden Pets in 3D Maps for Free!</title>
   <meta name="keywords" content="Find The Pets , pet finding game, online browser games, cute pet game, 3D platformer, HTML5 games, hidden pets, Floppa meme cat, casual games, Unity web game, play for free, pet collection game">
   <meta name="description" content="Play Find The Pets , a fun and relaxing 3D pet collection game! Explore 6 unique maps and discover 150 hidden pets including meme favorites like Floppa. No download required – play instantly in your browser for free!">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2276066180382829"
+     crossorigin="anonymous"></script>
   
   <!-- 预加载关键资源 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,6 +76,9 @@
     .iframe-container iframe {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%; border: 0;
+      /* 尝试隐藏第三方控制按钮 */
+      transform: scale(1.02);
+      transform-origin: top left;
     }
     
     /* 加载状态样式 */
@@ -105,6 +110,43 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+    
+    /* 错误状态样式 */
+    .error-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      z-index: 15;
+    }
+    .error-overlay h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.2rem;
+    }
+    .error-overlay p {
+      margin: 0 0 1.5rem 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    .retry-btn {
+      background: var(--accent);
+      color: #222;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .retry-btn:hover {
+      transform: scale(1.05);
     }
     
     .video-section {
@@ -233,7 +275,7 @@
     
     /* 触摸设备优化 */
     @media (hover: none) and (pointer: coarse) {
-      .load-video-btn {
+      .load-video-btn, .retry-btn {
         min-height: 44px; /* 确保触摸目标足够大 */
       }
     }
@@ -246,9 +288,20 @@
   </header>
   <main>
     <section class="iframe-container" id="game-section">
+      <div style="background: rgba(0,0,0,0.8); color: white; padding: 0.5rem; text-align: center; font-size: 0.8rem; border-radius: var(--radius) var(--radius) 0 0;">
+        🎮 Game powered by CrazyGames - The exit button in the top-left is normal
+      </div>
       <div class="loading-overlay" id="game-loading">
         <div class="loading-spinner"></div>
         <div>Loading Game...</div>
+      </div>
+      <div class="error-overlay" id="game-error" style="display: none;">
+        <h3>🎮 Game Loading Issue</h3>
+        <p>Sorry, the game couldn't load properly. This might be due to network restrictions or browser settings. Try refreshing the page or using a different browser.</p>
+        <button class="retry-btn" onclick="retryGame()">🔄 Retry Loading</button>
+        <a href="https://games.crazygames.com/en_US/find-the-pets-cph/index.html?v=1.335" target="_blank" style="color: white; text-decoration: none; margin-top: 1rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 15px; font-size: 0.9rem;">
+          🌐 Open Game in New Tab
+        </a>
       </div>
       <iframe id="game-iframe" src="https://games.crazygames.com/en_US/find-the-pets-cph/index.html?v=1.335" title="Find The Pets" allow="autoplay; payment; fullscreen; microphone; focus-without-user-activation *; screen-wake-lock; gamepad; clipboard-read; clipboard-write; accelerometer; gyroscope; " allowfullscreen sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-same-origin allow-downloads allow-popups allow-popups-to-escape-sandbox" importance="high" data-hj-allow-iframe="true"></iframe>
     </section>
@@ -308,30 +361,84 @@
     // 游戏加载处理
     const gameIframe = document.getElementById('game-iframe');
     const gameLoading = document.getElementById('game-loading');
+    const gameError = document.getElementById('game-error');
+    let gameLoadTimeout;
+    let gameLoadAttempts = 0;
+    const maxAttempts = 3;
+    
+    function initGame() {
+      gameLoadAttempts++;
+      gameLoading.style.display = 'flex';
+      gameError.style.display = 'none';
+      
+      // 设置超时检测
+      gameLoadTimeout = setTimeout(() => {
+        if (gameLoadAttempts < maxAttempts) {
+          console.log(`Game load attempt ${gameLoadAttempts} failed, retrying...`);
+          retryGame();
+        } else {
+          console.log('Game failed to load after multiple attempts');
+          showGameError();
+        }
+      }, 15000); // 15秒超时
+    }
+    
+    function showGameError() {
+      gameLoading.style.display = 'none';
+      gameError.style.display = 'flex';
+    }
+    
+    function retryGame() {
+      clearTimeout(gameLoadTimeout);
+      gameIframe.src = gameIframe.src; // 重新加载iframe
+      initGame();
+    }
     
     // 检测游戏是否加载完成
     gameIframe.addEventListener('load', function() {
+      clearTimeout(gameLoadTimeout);
       setTimeout(() => {
         gameLoading.classList.add('hidden');
-      }, 1000); // 给游戏一点时间初始化
+        gameLoadAttempts = 0; // 重置尝试次数
+      }, 2000); // 给游戏一点时间初始化
     });
     
-    // 如果游戏加载超时，也隐藏加载状态
-    setTimeout(() => {
-      gameLoading.classList.add('hidden');
-    }, 10000); // 10秒后强制隐藏
+    // 检测游戏加载错误
+    gameIframe.addEventListener('error', function() {
+      clearTimeout(gameLoadTimeout);
+      if (gameLoadAttempts < maxAttempts) {
+        retryGame();
+      } else {
+        showGameError();
+      }
+    });
+    
+    // 初始化游戏加载
+    initGame();
     
     // 视频加载处理
     function loadVideo() {
       const videoIframe = document.getElementById('video-iframe');
       const videoPlaceholder = document.getElementById('video-placeholder');
       
-      // 设置YouTube视频URL
-      videoIframe.src = 'https://www.youtube.com/embed/WU2I3pLVkag?autoplay=0&rel=0';
+      // 设置YouTube视频URL，添加移动端优化参数
+      videoIframe.src = 'https://www.youtube.com/embed/WU2I3pLVkag?autoplay=0&rel=0&modestbranding=1&playsinline=1';
       
       // 显示视频，隐藏占位符
       videoIframe.style.display = 'block';
       videoPlaceholder.classList.add('hidden');
+      
+      // 检测视频加载错误
+      videoIframe.addEventListener('error', function() {
+        console.log('Video failed to load');
+        videoPlaceholder.innerHTML = `
+          <h3>🎮 Video Unavailable</h3>
+          <p>Sorry, the video couldn't load. This might be due to network restrictions.</p>
+          <p style="font-size: 0.8rem; margin-top: 1rem;">You can still enjoy the game above!</p>
+        `;
+        videoPlaceholder.classList.remove('hidden');
+        videoIframe.style.display = 'none';
+      });
     }
     
     // 检测移动设备
@@ -346,6 +453,20 @@
       
       // 添加触摸优化
       document.addEventListener('touchstart', function() {}, {passive: true});
+      
+      // 移动端特殊处理
+      console.log('Mobile device detected, applying optimizations...');
+      
+      // 移动端可能需要更长的加载时间
+      gameLoadTimeout = setTimeout(() => {
+        if (gameLoadAttempts < maxAttempts) {
+          console.log(`Mobile: Game load attempt ${gameLoadAttempts} failed, retrying...`);
+          retryGame();
+        } else {
+          console.log('Mobile: Game failed to load after multiple attempts');
+          showGameError();
+        }
+      }, 20000); // 移动端给20秒超时
     }
     
     function scrollToGame() {
